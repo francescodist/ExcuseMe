@@ -1,21 +1,42 @@
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import AppContainer from "./routing/AppContainer";
+import { Font } from 'expo';
+import {Ionicons} from "@expo/vector-icons";
+import firebase from 'firebase';
+import {firebaseConfig} from "./api-key";
 
-export default class App extends React.Component {
-  render() {
-    return (
-      <View style={styles.container}>
-        <Text>Open up App.js to start working on your app!</Text>
-      </View>
-    );
-  }
+interface AppState {
+    fontLoaded: boolean;
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+export default class App extends React.Component<null, AppState> {
+
+    async componentWillMount() {
+        firebase.initializeApp(firebaseConfig);
+        await Font.loadAsync({
+            'Roboto': require('native-base/Fonts/Roboto.ttf'),
+            'Roboto_medium': require('native-base/Fonts/Roboto_medium.ttf'),
+            // @ts-ignore
+            ...Ionicons.font,
+        });
+        this.setState({fontLoaded: true});
+    }
+
+    constructor(props: any) {
+        super(props);
+
+        this.state = {
+            fontLoaded: false
+        };
+    }
+
+
+
+    render() {
+        return (
+            this.state.fontLoaded ?  <AppContainer/> : null
+        );
+    }
+}
+
+
